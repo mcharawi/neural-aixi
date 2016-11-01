@@ -259,7 +259,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
 
         # Sample from the context tree, getting a list of symbols corresponding to an action.
         # NOTE: works only for a binary symbol alphabet.
-        action_list = self.context_tree.generate_random_symbols(self.environment.action_bits())
+        action_list = self.nade.generate_random_symbols(self.environment.action_bits())
 
         # Decode the sample into an action, then return it.
         return self.decode_action(action_list)
@@ -273,7 +273,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         """
 
         # Sample from the context tree.
-        percept_symbols = self.context_tree.generate_random_symbols(self.environment.percept_bits())
+        percept_symbols = self.nade.generate_random_symbols(self.environment.percept_bits())
 
         # Decode and return the percept symbols into the desired observation and reward.
         return self.decodePercept(percept_symbols)
@@ -287,7 +287,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         """
 
         # Sample from the context tree.
-        percept_symbols = self.context_tree.generate_random_symbols_and_update(self.environment.percept_bits())
+        percept_symbols = self.nade.generate_random_symbols_and_update(self.environment.percept_bits())
 
         # Decode the percept symbols into the desired observation and reward.
         observation, reward = self.decode_percept(percept_symbols)
@@ -317,7 +317,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
 
         # Get the probability of seeing this action using the context tree 
         # to make a prediction.
-        return self.context_tree.predict(action_symbols)
+        return self.nade.predict(action_symbols)
     # end def
 
     def history_size(self):
@@ -325,7 +325,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
             (Called `historySize` in the C++ version.)
         """
 
-        return len(self.context_tree.history)
+        return len(self.nade.history)
     # end def
 
     def maximum_bits_needed(self):
@@ -350,11 +350,11 @@ class MC_AIXI_NADE_Agent(agent.Agent):
             # Undo an action or a percept, depending on the current state of the agent.
             if self.last_update == percept_update:
                 # Undo a percept.
-                self.context_tree.revert(self.environment.percept_bits())
+                self.nade.revert(self.environment.percept_bits())
                 self.last_update = action_update
             else:
                 # Undo an action.
-                self.context_tree.revert_history(self.environment.action_bits())
+                self.nade.revert_history(self.environment.action_bits())
                 self.last_update = percept_update
             # end if
         # end while
@@ -370,7 +370,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
 
             (Called `modelSize` in the C++ version.)
         """
-        return self.context_tree.size()
+        return self.nade.size()
     # end def
 
     def model_update_action(self, action):
@@ -391,7 +391,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         action_symbols = self.encode_action(action)
 
         # Update the context tree.
-        self.context_tree.update_history(action_symbols);
+        self.nade.update_history(action_symbols);
 
         # Update other properties.
         self.age += 1;
@@ -417,10 +417,10 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         # Are we still meant to be learning?
         if ((self.learning_period > 0) and (self.age > self.learning_period)):
             # No. Update, but don't learn.
-            self.context_tree.update_history(percept_symbols)
+            self.nade.update_history(percept_symbols)
         else:
             # Yes. Update and learn.
-            self.context_tree.update(percept_symbols)
+            self.nade.update(percept_symbols)
         # end if
 
         # Update other properties.
@@ -447,7 +447,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
 
         # Get the probability of seeing this percept using the context tree 
         # to make a prediction.
-        return self.context_tree.predict(percept_symbols)
+        return self.nade.predict(percept_symbols)
     # end def
 
     def playout(self, horizon):
@@ -485,7 +485,7 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         """
 
         # Reset the context tree.
-        self.context_tree.clear()
+        self.nade.clear()
 
         # Reset the basic agent details.
         agent.Agent.reset(self)
