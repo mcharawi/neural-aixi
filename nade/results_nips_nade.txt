@@ -1,2 +1,0 @@
-lr	dc	nhid	seed	order_seed	untied	best_it	train	tr_std	valid	va_std	test	te_std
-0.005	0.0	500	1234	1234	True	37	248.934317933	1.06295632948	274.45889689	1.76362408791	274.542410588	0.566705343152
