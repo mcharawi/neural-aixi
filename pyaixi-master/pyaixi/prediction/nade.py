@@ -83,7 +83,7 @@ class NADE(mlgeneric.OnlineLearner):
       
       self.n_updates = 0
 
-   def update_learner(self,example):
+   def update(self,example):
       self.input[self.input_order] = example
    
       # fprop
@@ -134,7 +134,7 @@ class NADE(mlgeneric.OnlineLearner):
           self.V -= self.dV
       self.n_updates += 1
 
-   def use_learner(self,example):
+   def predict(self,example):
       self.input[self.input_order] = example
       output = np.zeros((self.input_size))
       recact = np.zeros((self.input_size))
@@ -160,7 +160,7 @@ class NADE(mlgeneric.OnlineLearner):
       #return [ np.sum(-self.input*np.log(outputs[0]) - (1-self.input)*np.log(1-outputs[0])) ]
       return [ np.sum(-self.input*(outputs[1]-np.log(1+np.exp(outputs[1]))) - (1-self.input)*(-outputs[1]-np.log(1+np.exp(-outputs[1])))) ]
 
-   def sample(self):
+   def generate_random_symbols(self):
       input = np.zeros(self.input_size)
       input_prob = np.zeros(self.input_size)
       hid_i = np.zeros(self.hidden_size)
@@ -275,5 +275,50 @@ class NADE(mlgeneric.OnlineLearner):
          self.update_learner(example)
          self.V[:] = V_copy
          print 'dV diff.:',np.sum(np.abs(self.dV.ravel()-emp_dV.ravel()))/self.V.ravel().shape[0]
+
+   def clear(self):
+        """ Clears the entire context tree including all nodes and history.
+        """
+    # end def
+
+
+    # def revert(self, symbol_count = 1):
+    #     """ Restores the context tree to its state prior to a specified number of updates.
+     
+    #         - `num_symbols`: the number of updates (symbols) to revert. (Default of 1.)
+    #     """
+
+    #     # Traverse the tree from leaf to root according to the context.
+    #     for i in xrange(0, symbol_count):
+    #         # Check if we have updates to revert.
+    #         if len(self.history) == 0:
+    #             return
+    #         # end if
+
+    #         # Get the most recent symbol and delete from the history.
+    #         symbol = self.history.pop()
+
+    #         # Traverse the tree from leaf to root according to the context. Update the
+    #         # probabilities and symbol counts for each node. Delete unnecessary nodes.
+    #         if len(self.history) >= self.depth:
+    #             self.update_context()
+
+    #             # Step backwards through the nodes in the context in reverse context order.
+    #             # (Only go as deep as the current tree depth, though.)
+    #             for context_node in reversed(self.context[:self.depth]):
+    #                 context_node.revert(symbol)
+    #             # end for
+    #         # end if
+    #     # end for
+    # # end def
+
+
+   def size(self):
+        """ Returns one, since the size of the nade is not relevant to the
+            calculatoins.
+        """
+        return 1
+    # end def
+
 
 

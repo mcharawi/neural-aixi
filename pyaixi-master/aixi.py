@@ -210,7 +210,7 @@ def main(argv):
 
     # Define some default configuration values.
     default_options = {}
-    default_options["agent"]           = "mc_aixi_ctw"
+    default_options["agent"]           = "mc_aixi_nade"
     default_options["agent-horizon"]   = 5
     default_options["ct-depth"]        = 30
     default_options["environment"]     = "coin_flip"

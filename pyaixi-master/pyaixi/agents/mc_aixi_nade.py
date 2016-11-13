@@ -12,6 +12,10 @@ import copy
 import os
 import random
 import sys
+import fcntl
+import copy, time
+import numpy as np
+import pyaixi.prediction.mlpython.mlproblems.generic as mlpb
 
 # Insert the package's parent directory into the system search path, so that this package can be
 # imported when the aixi.py script is run directly from a release archive.
@@ -133,12 +137,10 @@ class MC_AIXI_NADE_Agent(agent.Agent):
         # Created for this instance.
         # (Called `m_ct` in the C++ version.)
         self.nade = nade.NADE(n_stages = 1,
-			     learning_rate = learning_rate, 
-			     decrease_constant = decrease_constant,
-			     hidden_size = hidden_size,
-			     seed = seed,
-			     input_order = input_order,
-			     untied_weights = untied_weights)
+			     learning_rate = 0.001, 
+			     hidden_size = 100,
+			     seed = 1234,
+			     untied_weights = False)
 
         # The length of the agent's planning horizon.
         # Retrieved from the given options under 'agent-horizon'. Mandatory.
