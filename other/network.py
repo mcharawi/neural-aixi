@@ -34,7 +34,7 @@ class Network(object):
             a = tanh(np.dot(w, a)+b)
         return a
 
-    def update_mini_batch(self, mini_batch, eta):
+    def update(self, mini_batch, eta):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
