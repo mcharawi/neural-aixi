@@ -37,13 +37,17 @@ class SearchTree(object):
 	and the reward."""
 	self.model.update([x, y])
 
-    def run_simulation(self, action):
+    def run_simulation(self, action, observation):
 	"""The method that runs a playout simulation for a given
 	beginning action."""
+	
 	return reward
 
-    def get_action(self):
+    def get_action(self, observation):
 	"""Get the best possible action given the current
 	model of the environment."""
-	return action
+	rewards = []
+	for action in range(self.action_space_size):
+		rewards.append(self.run_simulation(action, observation))
+	return np.argmax(rewards) + 1
 

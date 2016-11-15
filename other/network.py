@@ -14,7 +14,7 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes, obs_scale, rew_scale):
+    def __init__(self, sizes, obs_scale, rew_scale, eta):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  The scalar 'obs_scale' scales the 
 	observation down to [0,1] and the 'rew_scale' scales down the 
@@ -24,6 +24,7 @@ class Network(object):
 	self.rew_scale = rew_scale
 	self.num_layers = len(sizes)
         self.sizes = sizes
+	self.eta = eta
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
@@ -34,7 +35,7 @@ class Network(object):
             a = tanh(np.dot(w, a)+b)
         return a
 
-    def update(self, mini_batch, eta):
+    def update(self, mini_batch):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
@@ -45,9 +46,9 @@ class Network(object):
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
             nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
             nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
-        self.weights = [w-(eta/len(mini_batch))*nw
+        self.weights = [w-(self.eta/len(mini_batch))*nw
                         for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(eta/len(mini_batch))*nb
+        self.biases = [b-(self.eta/len(mini_batch))*nb
                        for b, nb in zip(self.biases, nabla_b)]
 
     def backprop(self, x, y):

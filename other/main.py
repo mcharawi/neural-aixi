@@ -1,16 +1,16 @@
 import gym
+import search_tree as st
 import network
 import time
 import numpy as np
 
 env = gym.make('AirRaid-ram-v0')
-network = network.Network([129, 200, 200, 200, 129], 256.0, 100.0)
+network = network.Network([129, 200, 200, 200, 129], 256.0, 100.0, 0.1)
+st = st.SearchTree(network, env.action_space.n, 1000)
 observation = env.reset()
-env.render()
+action = env.action_space.sample()
+total_reward = 0
 for counter in range(10000):
-	
-	# Select a random action
-	action = env.action_space.sample()
 	
 	# Construct the x vector
 	x_arr = np.append(observation, action)
@@ -23,6 +23,7 @@ for counter in range(10000):
 	#Take the random action
         observation, reward, done, info = env.step(action)
 	
+	total_reward = total_reward + reward
 	# COnstruct the y vector
 	y_arr = np.append(observation/network.obs_scale, reward/network.rew_scale)
 	i = 0	
@@ -32,8 +33,12 @@ for counter in range(10000):
 		i = i + 1
 	
 	# Update the network
-	network.update_mini_batch([(x,y)], 0.1)
+	st.update_model([(x,y)])
+	
+	action = st.get_action(observation)
 	
 	#reset the environment if necessary
         if done:
 	    observation = env.reset()
+
+print("The total reward is %d" % total_reward)
