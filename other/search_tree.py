@@ -14,6 +14,9 @@ specified in network.py.
 
 import random
 import numpy as np
+import time
+
+current_milli_time = lambda: int(round(time.time() * 1000))
 
 class SearchTree(object):
 
@@ -29,18 +32,33 @@ class SearchTree(object):
 	self.action_space_size = action_space_size
 	
 
-    def update_model(self, x, y):
+    def update_model(self, x):
 	""" Update the search tree's model of the env
 	with the given  data. 'x' is the concatentation
 	of the previous observation, and the action taken
 	and 'y' is the concatenation of the new observation
 	and the reward."""
-	self.model.update([x, y])
+	self.model.update(x)
 
     def run_simulation(self, action, observation):
 	"""The method that runs a playout simulation for a given
 	beginning action."""
-	
+	input_array = np.append(observation, action)
+	i = 0
+	x = np.zeros((129,1))
+	for item in input_array:
+		x[i][0] = np.array(item)
+		i = i + 1
+
+	out = self.model.feedforward(input_array)
+	reward = out[-1][0]
+	start_time = current_milli_time()
+	while current_milli_time() - start_time < self.simulation_time:
+		out = out * 256
+		out[-1][0] = random.uniform(1, self.action_space_size)
+		out = self.model.feedforward(out)
+		reward = reward + 100*out[-1][0]
+	print reward
 	return reward
 
     def get_action(self, observation):
@@ -48,6 +66,10 @@ class SearchTree(object):
 	model of the environment."""
 	rewards = []
 	for action in range(self.action_space_size):
+		print action
 		rewards.append(self.run_simulation(action, observation))
+	print rewards
 	return np.argmax(rewards) + 1
+
+
 
