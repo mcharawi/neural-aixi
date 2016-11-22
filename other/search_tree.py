@@ -54,11 +54,10 @@ class SearchTree(object):
 	reward = out[-1][0]
 	start_time = current_milli_time()
 	while current_milli_time() - start_time < self.simulation_time:
-		out = out * 256
-		out[-1][0] = random.uniform(1, self.action_space_size)
+		out = out * 255
+		out[-1][0] = random.randint(0, self.action_space_size-1)
 		out = self.model.feedforward(out)
 		reward = reward + 100*out[-1][0]
-	print reward
 	return reward
 
     def get_action(self, observation):
@@ -66,10 +65,8 @@ class SearchTree(object):
 	model of the environment."""
 	rewards = []
 	for action in range(self.action_space_size):
-		print action
 		rewards.append(self.run_simulation(action, observation))
-	print rewards
-	return np.argmax(rewards) + 1
+	return np.argmax(rewards)
 
 
 
