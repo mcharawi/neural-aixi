@@ -72,10 +72,10 @@ for temp_env in envs:
         p_1 = total_reward/1000
         p_2 = total_baseline_reward/training
         f.write("The environment is %s\n" % temp_env)
-        f.write("The eta is %d\n" % eta)
-        f.write("The time is %d\n" % search_time)
-        f.write("The training is %d\n" % training)
-        f.write("The total reward is %d\n" % p_1)
-        f.write("The total baseline reward is %d\n" % p_2)
+        f.write("The eta is %f\n" % eta)
+        f.write("The time is %f\n" % search_time)
+        f.write("The training is %f\n" % training)
+        f.write("The total reward is %f\n" % p_1)
+        f.write("The total baseline reward is %f\n" % p_2)
 
 f.close()
